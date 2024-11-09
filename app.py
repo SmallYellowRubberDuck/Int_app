@@ -1,9 +1,12 @@
+import math
 import tkinter as tk
-from tkinter import filedialog, messagebox
-from tkinter import ttk
+from tkinter import filedialog, messagebox, ttk
 import pandas as pd
 import os
 import cv2
+import platform
+import psutil
+import torch
 
 def ml_model(video_path):
     cap = cv2.VideoCapture(video_path)
@@ -16,7 +19,6 @@ def ml_model(video_path):
         "Duration (s)": duration,
         "Count Frame": count_frame
     }
-
 class VideoProcessingApp:
     def __init__(self, root):
         self.root = root
@@ -24,6 +26,16 @@ class VideoProcessingApp:
         
         self.video_files = []
         
+        # Меню
+        self.menu = tk.Menu(root)
+        root.config(menu=self.menu)
+        
+        # Подменю для выбора конфигурации ПК
+        self.pc_config_menu = tk.Menu(self.menu, tearoff=0)
+        self.menu.add_cascade(label="PC Configuration", menu=self.pc_config_menu)
+        
+        
+
         # Кнопка для загрузки видео
         self.upload_button = tk.Button(root, text="Upload Video", command=self.upload_video)
         self.upload_button.pack(pady=10)
@@ -47,6 +59,63 @@ class VideoProcessingApp:
         self.tree.heading("Count Frame", text="Count Frame")
         self.tree.pack(fill=tk.BOTH, expand=True, pady=10)
 
+        # Конфигурации по умолчанию
+        def get_processor_info():
+            processor_info = platform.processor()
+            if 'Intel' in processor_info:
+                self.processor = tk.StringVar(value="Intel")
+            elif 'AMD' in processor_info:
+                self.processor = tk.StringVar(value='AMD')
+            elif 'Apple' in processor_info:
+                self.processor = tk.StringVar(value='Apple')
+            else:
+                self.processor = "Unknown"
+        get_processor_info()
+        def get_memory_info():
+            mem = psutil.virtual_memory()
+            self.ram = tk.StringVar(value=f"{math.ceil(mem.total/1024**3)} GB")
+        get_memory_info()
+        def check_cuda_availability():
+            if torch.cuda.is_available():
+                self.gpu = tk.StringVar(value='With CUDA')
+            else:
+                self.gpu = tk.StringVar(value='Without CUDA')
+        check_cuda_availability()
+        # Добавляем выпадающие списки для выбора конфигурации ПК
+        self.processor_menu_item = self.pc_config_menu.add_command(label=f"Processor: {self.processor.get()}" , command=self.select_processor)
+        self.ram_menu_item = self.pc_config_menu.add_command(label=f"RAM: {self.ram.get()}", command=self.select_ram)
+        self.gpu_menu_item = self.pc_config_menu.add_command(label=f"Graphics Card: {self.gpu.get()}", command=self.select_gpu)
+    
+    def select_processor(self):
+        processor_options = ["AMD", "Intel", "Apple"]
+        self.show_option_menu("Select Processor", self.processor, processor_options)
+    
+    def select_ram(self):
+        ram_options = ["4 GB", "8 GB", "16 GB", "32 GB", "64 GB", "128 GB"]
+        self.show_option_menu("Select RAM", self.ram, ram_options)
+    
+    def select_gpu(self):
+        gpu_options = ["With CUDA", "Without CUDA"]
+        self.show_option_menu("Select GPU type", self.gpu, gpu_options)
+    
+    def show_option_menu(self, title, variable, options):
+        top = tk.Toplevel(self.root)
+        top.title(title)
+        
+        combobox = ttk.Combobox(top, textvariable=variable, values=options, state="readonly")
+        combobox.pack(padx=20, pady=20)
+        combobox.set(variable.get())  # Устанавливаем текущее значение
+        def on_select():
+            top.destroy()  # Закрыть окно после выбора
+            self.pc_config_menu.delete(0,)
+            self.processor_menu_item = self.pc_config_menu.add_command(label=f"Processor: {self.processor.get()}" , command=self.select_processor)
+            self.ram_menu_item = self.pc_config_menu.add_command(label=f"RAM: {self.ram.get()}", command=self.select_ram)
+            self.gpu_menu_item = self.pc_config_menu.add_command(label=f"Graphics Card: {self.gpu.get()}", command=self.select_gpu)
+            messagebox.showinfo("Selected", f"You selected: {variable.get()}")
+
+        # Кнопка для подтверждения выбора
+        select_button = tk.Button(top, text="Select", command=on_select)
+        select_button.pack(pady=10)
     def upload_video(self):
         files = filedialog.askopenfilenames(title="Select Video Files", filetypes=[("Video Files", "*.mp4;*.avi;*.mov")])
         self.video_files.extend(files)
