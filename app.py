@@ -62,9 +62,9 @@ class VideoProcessingApp:
             messagebox.showwarning("Warning", "No results to save!")
             return
         
-        file_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")])
+        file_path = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel files", "*.xlsx")])
         if file_path:
-            self.results_table.to_csv(file_path, index=False)
+            self.results_table.to_excel(file_path, index=False)
             messagebox.showinfo("Info", f"Results saved to {file_path}")
 
 if __name__ == "__main__":
