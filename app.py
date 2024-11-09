@@ -121,6 +121,9 @@ class VideoProcessingApp:
         if self.video_folder_path.get() and self.xlsx_file_path.get():
             messagebox.showinfo("Info", f"You selected {self.video_folder_path.get()} as video folder\n and \n{self.xlsx_file_path.get()} as markup file")
             top.grab_release()
+            messagebox.showinfo("Info", "Wait until next warning with result of learning")
+            #СЮДА ВСТАВИТЬ ОБУЧЕНИЕ МОДЕЛИ
+            messagebox.showwarning("Warning", "Model is ready")
             top.destroy()
         else:
             messagebox.showwarning("Warning", "Please, select both video folder and Excel file")
@@ -207,7 +210,7 @@ class VideoProcessingApp:
             results.append(result)
         # Сохраняем результаты в таблице
         self.results_table = pd.DataFrame(results)
-        messagebox.showinfo("Info", "Processing complete!")
+        #messagebox.showinfo("Info", "Processing complete!")
         # Очищаем Treeview перед добавлением новых данных
         for item in self.tree.get_children():
             self.tree.delete(item)
