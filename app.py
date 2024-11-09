@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
+from tkinter import ttk
 import pandas as pd
 import os
 import cv2
@@ -38,6 +39,14 @@ class VideoProcessingApp:
         # Таблица результатов
         self.results_table = None
         
+        # Treeview для отображения результатов
+        self.tree = ttk.Treeview(root, columns=("Video", "Result", "Duration (s)", "Count Frame"), show="headings")
+        self.tree.heading("Video", text="Video")
+        self.tree.heading("Result", text="Result")
+        self.tree.heading("Duration (s)", text="Duration (s)")
+        self.tree.heading("Count Frame", text="Count Frame")
+        self.tree.pack(fill=tk.BOTH, expand=True, pady=10)
+
     def upload_video(self):
         files = filedialog.askopenfilenames(title="Select Video Files", filetypes=[("Video Files", "*.mp4;*.avi;*.mov")])
         self.video_files.extend(files)
@@ -53,9 +62,17 @@ class VideoProcessingApp:
             result = ml_model(video)
             results.append(result)
         
+        # Сохраняем результаты в таблице
         self.results_table = pd.DataFrame(results)
         messagebox.showinfo("Info", "Processing complete!")
-        print(self.results_table)  # Для отладки, можно убрать
+        
+        # Очищаем Treeview перед добавлением новых данных
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
+        # Добавляем новые данные в Treeview
+        for _, row in self.results_table.iterrows():
+            self.tree.insert("", "end", values=(row["Video"], row["Result"], row["Duration (s)"], row["Count Frame"]))
     
     def save_results(self):
         if self.results_table is None:
