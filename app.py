@@ -106,8 +106,8 @@ class VideoProcessingApp:
         combobox.pack(padx=20, pady=20)
         combobox.set(variable.get())  # Устанавливаем текущее значение
         def on_select():
-            top.destroy()  # Закрыть окно после выбора
-            self.pc_config_menu.delete(0,)
+            #top.destroy()  # Закрыть окно после выбора
+            self.pc_config_menu.delete(0, tk.END)
             self.processor_menu_item = self.pc_config_menu.add_command(label=f"Processor: {self.processor.get()}" , command=self.select_processor)
             self.ram_menu_item = self.pc_config_menu.add_command(label=f"RAM: {self.ram.get()}", command=self.select_ram)
             self.gpu_menu_item = self.pc_config_menu.add_command(label=f"Graphics Card: {self.gpu.get()}", command=self.select_gpu)
