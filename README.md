@@ -15,7 +15,11 @@ git clone https://github.com/SmallYellowRubberDuck/Int_app.git
 ```
 2. Установите необходимые зависимости:
 ```bash
-pip install opencv-python pandas cv2 torch psutil 
+pip install opencv-python pandas torch psutil 
+```
+ИЛИ
+```bash
+pip install -r requirements.txt
 ```
 3. Запустите скрипт
 ```bash
