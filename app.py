@@ -29,7 +29,7 @@ class VideoProcessingApp:
         
         # Центрируем главное окно
         self.center_window(self.root)
-
+        self.model = "Model1"
         self.video_files = []
 
         # Меню
@@ -39,8 +39,10 @@ class VideoProcessingApp:
         # Подменю для выбора конфигурации ПК
         self.pc_config_menu = tk.Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label="PC Configuration", menu=self.pc_config_menu)
+        self.choose_model_menu = tk.Menu(self.menu, tearoff=0)
+        self.menu.add_cascade(label="Model", menu=self.choose_model_menu)
         # Кнопка для дообучения модели
-        self.further_train_button = tk.Button(root, text="Train Model", command=self.load_files_window, relief="raised", width=30, height=2, bg="#FF9800", fg="white", font=("Arial", 12, "bold"), activebackground="#FB8C00", activeforeground="white")
+        self.further_train_button = tk.Button(root, text="Train Model", command=self.load_files_window, relief="raised", width=30, height=2, bg="#A9C8FF", fg="white", font=("Arial", 12, "bold"), activebackground="#FB8C00", activeforeground="white")
         self.further_train_button.pack(pady=15)
         
         # Кнопка для загрузки видео
@@ -80,6 +82,15 @@ class VideoProcessingApp:
         self.ram_menu_item = self.pc_config_menu.add_command(label=f"RAM: {self.ram.get()}", command=self.select_ram)
         self.gpu_menu_item = self.pc_config_menu.add_command(label=f"Graphics Card: {self.gpu.get()}", command=self.select_gpu)
 
+        # Добавляем выбор моделей в соответствующее меню 
+        self.model1_menu_item = self.choose_model_menu.add_command(label="Model1", command=lambda: self.choose_model('Model1'))
+        self.model2_menu_item = self.choose_model_menu.add_command(label="Model2", command=lambda: self.choose_model('Model2'))
+        #...self.model3_menu_item = self.choose_model_menu.add_command(label="Model3", command=self.choose_model('Model3'))
+    def choose_model(self, model):
+        print(self.model, model)
+        self.model = model
+
+    # Открытие окна выбора данных для дообучения модели
     def load_files_window(self):
             top = tk.Toplevel(self.root)
             top.title("Choose video folder and markup excel file")
@@ -98,7 +109,7 @@ class VideoProcessingApp:
             
             xlsx_button = tk.Button(top, text="Browse", command=self.select_xlsx_file, width=20, height=2, bg="#2196F3", fg="white", font=("Arial", 12, "bold"))
             xlsx_button.pack(pady=5)
-            #Создадим пробел
+            #Создадим пробел для разграничения ввода-вывода
             empty_space = tk.Label(top, text="", height=1)
             empty_space.pack(pady=10)
             # Кнопка для подтверждения окончания выбора
@@ -108,15 +119,17 @@ class VideoProcessingApp:
             cancel_button = tk.Button(top, text="Cancel", command = top.destroy, width=20, height=2, bg="#FF5722", fg='white', font=("Arial", 12, "bold"))
             cancel_button.pack(pady=10)
             self.center_window(top)
+    # Функция получения от пользователя пути к папке с видео для дообучения
     def select_video_folder(self):
         folder_path = filedialog.askdirectory(title="Select Video Folder")
         if folder_path:
             self.video_folder_path.set(folder_path)
-            
+    # Функция получения от пользователя пути к файлу разметки для дообучения       
     def select_xlsx_file(self):
         file_path = filedialog.askopenfilename(title="Select Excel File", filetypes=[("Excel files", "*.xlsx")])
         if file_path:
             self.xlsx_file_path.set(file_path)
+    # Функция подтверждения выбора файлов для дообучения и закрытия окна
     def close_train_window(self, top):
         if self.video_folder_path.get() and self.xlsx_file_path.get():
             messagebox.showinfo("Info", f"You selected {self.video_folder_path.get()} as video folder\n and \n{self.xlsx_file_path.get()} as markup file")
@@ -127,7 +140,7 @@ class VideoProcessingApp:
             top.destroy()
         else:
             messagebox.showwarning("Warning", "Please, select both video folder and Excel file")
-    
+    # Функция центрирования окна
     def center_window(self, window):
         window.update_idletasks()
         width = window.winfo_width()
@@ -140,6 +153,7 @@ class VideoProcessingApp:
         position_left = int(screen_width / 2 - width / 2)
         
         window.geometry(f'{width}x{height}+{position_left}+{position_top}')
+    # Функция получения информации о процессоре
     def get_processor_info(self):
         processor_info = platform.processor()
         if 'Intel' in processor_info:
@@ -150,17 +164,17 @@ class VideoProcessingApp:
             self.processor = tk.StringVar(value="Apple")
         else:
             self.processor = "Unknown"
-
+    # Функция получения объема оперативной памяти
     def get_memory_info(self):
         mem = psutil.virtual_memory()
         self.ram = tk.StringVar(value=f"{math.ceil(mem.total / 1024 ** 3)} GB")
-
+    # Функция проверки возможности использования CUDA-ядер
     def check_cuda_availability(self):
         if torch.cuda.is_available():
             self.gpu = tk.StringVar(value="With CUDA")
         else:
             self.gpu = tk.StringVar(value="Without CUDA")
-
+    # Блок функций для выбора желаемых характеристик
     def select_processor(self):
         processor_options = ["AMD", "Intel", "Apple"]
         self.show_option_menu("Select Processor", self.processor, processor_options)
@@ -194,13 +208,14 @@ class VideoProcessingApp:
 
         select_button = tk.Button(top, text="Select", command=on_select, width=15, height=2, bg="#6C94DC", fg="white", font=("Arial", 12, "bold"), activebackground="#A9C8FF", activeforeground="white")
         select_button.pack(pady=10)
-
+    # Функция опроса пользователя на предмет видео для работы
     def upload_video(self):
         files = filedialog.askopenfilenames(title="Select Video Files", filetypes=[("Video Files", "*.mp4;*.avi;*.mov;*.wmv;*.avchd;*.swf;*.flv;*.mkv;*.webm;*.mpeg2")])
         self.video_files.extend(files)
         messagebox.showinfo("Info", f"Uploaded {len(files)} video(s).")
-
+    # Функция обработки видео моделью
     def process_video(self):
+        print(self.model)
         if not self.video_files:
             messagebox.showwarning("Warning", "No video files uploaded!")
             return
@@ -218,7 +233,7 @@ class VideoProcessingApp:
         for index, row in self.results_table.iterrows():
             tag = "oddrow" if index % 2 == 0 else "evenrow"
             self.tree.insert("", "end", values=(row["Video"], row["Result"], row["Duration (s)"], row["Count Frame"]), tags=(tag,))
-
+    # Функция зааписи результатов работы модели в xslx-файл
     def save_results(self):
         if self.results_table is None:
             messagebox.showwarning("Warning", "No results to save!")
