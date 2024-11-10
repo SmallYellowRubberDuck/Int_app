@@ -42,19 +42,19 @@ class VideoProcessingApp:
         self.choose_model_menu = tk.Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label="Model", menu=self.choose_model_menu)
         # Кнопка для дообучения модели
-        self.further_train_button = tk.Button(root, text="Train Model", command=self.load_files_window, relief="raised", width=30, height=2, bg="#A9C8FF", fg="white", font=("Arial", 12, "bold"), activebackground="#FB8C00", activeforeground="white")
+        self.further_train_button = tk.Button(root, text="Train Model", command=self.load_files_window, relief="raised", width=30, height=2, bg="#A9C8FF", fg="white", font=("Arial", 12, "bold"), activebackground="#87A0CC", activeforeground="white")
         self.further_train_button.pack(pady=15)
         
         # Кнопка для загрузки видео
-        self.upload_button = tk.Button(root, text="Upload Video", command=self.upload_video, relief="raised", width=20, height=2, bg="#8320F5", fg="white", font=("Arial", 12, "bold"), activebackground="#6C94DC", activeforeground="white")
+        self.upload_button = tk.Button(root, text="Upload Video", command=self.upload_video, relief="raised", width=20, height=2, bg="#8320F5", fg="white", font=("Arial", 12, "bold"), activebackground="#5C00C4", activeforeground="white")
         self.upload_button.pack(pady=15)
 
         # Кнопка для обработки видео
-        self.process_button = tk.Button(root, text="Process Video", command=self.process_video, relief="raised", width=20, height=2, bg="#6C94DC", fg="white", font=("Arial", 12, "bold"), activebackground="#A9C8FF", activeforeground="white")
+        self.process_button = tk.Button(root, text="Process Video", command=self.process_video, relief="raised", width=20, height=2, bg="#6C94DC", fg="white", font=("Arial", 12, "bold"), activebackground="#5676B0", activeforeground="white")
         self.process_button.pack(pady=15)
 
         # Кнопка для сохранения результатов
-        self.save_button = tk.Button(root, text="Save Results", command=self.save_results, relief="raised", width=20, height=2, bg="#A9C8FF", fg="white", font=("Arial", 12, "bold"), activebackground="#8320F5", activeforeground="white")
+        self.save_button = tk.Button(root, text="Save Results", command=self.save_results, relief="raised", width=20, height=2, bg="#A9C8FF", fg="white", font=("Arial", 12, "bold"), activebackground="#87A0CC", activeforeground="white")
         self.save_button.pack(pady=15)
 
         # Таблица результатов
@@ -87,7 +87,6 @@ class VideoProcessingApp:
         self.model2_menu_item = self.choose_model_menu.add_command(label="Model2", command=lambda: self.choose_model('Model2'))
         #...self.model3_menu_item = self.choose_model_menu.add_command(label="Model3", command=self.choose_model('Model3'))
     def choose_model(self, model):
-        print(self.model, model)
         self.model = model
 
     # Открытие окна выбора данных для дообучения модели
@@ -100,23 +99,23 @@ class VideoProcessingApp:
             video_folder_label.pack(padx=10, pady=5)
 
             self.video_folder_path = tk.StringVar()
-            video_folder_button = tk.Button(top, text="Browse", command=self.select_video_folder, width=20, height=2, bg="#4CAF50", fg="white", font=("Arial", 12, "bold"))
+            video_folder_button = tk.Button(top, text="Browse", command=self.select_video_folder, width=20, height=2, bg="#8081F6", fg="white", font=("Arial", 12, "bold"))
             video_folder_button.pack(pady=5)
 
             self.xlsx_file_path = tk.StringVar()
             xlsx_label = tk.Label(top, text="Select Excel File:", font=("Arial", 12))
             xlsx_label.pack(padx=10, pady=5)
             
-            xlsx_button = tk.Button(top, text="Browse", command=self.select_xlsx_file, width=20, height=2, bg="#2196F3", fg="white", font=("Arial", 12, "bold"))
+            xlsx_button = tk.Button(top, text="Browse", command=self.select_xlsx_file, width=20, height=2, bg="#8081F6", fg="white", font=("Arial", 12, "bold"))
             xlsx_button.pack(pady=5)
             #Создадим пробел для разграничения ввода-вывода
             empty_space = tk.Label(top, text="", height=1)
             empty_space.pack(pady=10)
             # Кнопка для подтверждения окончания выбора
-            close_button = tk.Button(top, text="Confirm", command=lambda: self.close_train_window(top), width=20, height=2, bg="#FF9800", fg="white", font=("Arial", 12, "bold"))
+            close_button = tk.Button(top, text="Confirm", command=lambda: self.close_train_window(top), width=20, height=2, bg="#6C94DC", fg="white", font=("Arial", 12, "bold"))
             close_button.pack(pady=10)
             # Кнопка отмены
-            cancel_button = tk.Button(top, text="Cancel", command = top.destroy, width=20, height=2, bg="#FF5722", fg='white', font=("Arial", 12, "bold"))
+            cancel_button = tk.Button(top, text="Cancel", command = top.destroy, width=20, height=2, bg="#A9C8FF", fg='white', font=("Arial", 12, "bold"))
             cancel_button.pack(pady=10)
             self.center_window(top)
     # Функция получения от пользователя пути к папке с видео для дообучения
