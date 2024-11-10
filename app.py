@@ -122,7 +122,7 @@ class VideoProcessingApp:
             messagebox.showinfo("Info", f"You selected {self.video_folder_path.get()} as video folder\n and \n{self.xlsx_file_path.get()} as markup file")
             top.grab_release()
             messagebox.showinfo("Info", "Wait until next warning with result of learning")
-            #СЮДА ВСТАВИТЬ ОБУЧЕНИЕ МОДЕЛИ
+            # СЮДА ВСТАВИТЬ ОБУЧЕНИЕ МОДЕЛИ
             messagebox.showwarning("Warning", "Model is ready")
             top.destroy()
         else:
